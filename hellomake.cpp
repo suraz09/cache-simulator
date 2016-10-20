@@ -12,12 +12,6 @@ public:
     string tag;
     int dirty;
 
-    // Block(int v, int d, string t){
-    //     valid = v;
-    //     dirty = d;
-    //     tag = t;
-    // }
-
     void setValid(int v){
         valid = v;
     }
@@ -43,16 +37,20 @@ public:
 
 
 
-class Cache{
+class Cache{    
+public:
     int blockSize;
     int associativity;
     int size;
     int replacement_policy;
     int miss_penalty;
     int write_type;
-    
-    public:
-
+    int miss;
+    int hit;
+    int loadhit;
+    int loadmiss;
+    int storemiss;
+    int storehit;
         // Block blocks[10];
         std::vector<Block> blocks;
         Cache(int b, int a, int s, int r, int m,int w){
@@ -62,9 +60,28 @@ class Cache{
             replacement_policy = r;
             miss_penalty = m;
             write_type = w;
+            miss = 0;
+            hit = 0;
+            loadmiss = 0;
+            loadhit = 0;
+            storemiss = 0;
+            storehit = 0;
         }
         
-        
+        void increaseHit(){
+            hit++;
+        }
+        void increaseMiss(){
+            miss++;
+        }
+
+        int getHits(){
+            return hit;
+        }
+
+        int getMiss(){
+            return miss;
+        }
 
         int getBlockOffsetSize(){
             return log2(blockSize);
@@ -86,15 +103,59 @@ class Cache{
         }
         
 };
+class Address{
+public:
+    string tag;
+    string offset;
+    string index;
 
-
-void readFromCache(Cache c){
-    cout << endl;
-    for (int i = 0 ; i < 20; i++){
-    // cout << endl;
+    void setAddressTag(string addressTag){
+        tag = addressTag;
     }
+
+    void setAddressOffset(string addressOffset){
+        offset = addressOffset;
+    }
+
+    void setAddressIndex(string addressIndex){
+        index = addressIndex;
+    }
+
+    string getAddressTag(){
+        return tag;
+    }
+    string getAddressOffset(){
+        return offset;
+    }
+    string getAddressIndex(){
+        return index;
+    }
+};
+
+
+void readFromCache(Cache &c, Address address){
+    cout << endl;
+    int indexToSearch;
+    indexToSearch = hextoDec(address.getAddressIndex()) % c.getLineNumbers(); 
+    cout<<address.getAddressTag() << "\n";
+    cout << c.blocks[indexToSearch].getTag() + "123123123123";
+     if(c.blocks[indexToSearch].getTag() == address.getAddressTag()){
+            cout<< "Yeah I have a hit";
+            c.increaseHit();
+            cout << c.getHits();
+
+        }
+        else{
+            cout << "I Miss";
+            c.increaseMiss();
+        }
+    
 }
 
+void cacheResults(Cache c){
+    cout << "\nCache hits" << c.getHits();
+    cout << "\nCache miss" << c.getMiss() << endl;
+}
 
 
 
@@ -104,6 +165,7 @@ int main(){
 	cout << "str3 : " << str << endl;
     string binaryString = hextoBinary(str);
     Cache cache(8,1,16,1,100,1);
+    Address a;
     cout << "Cahe -------------------------------------------------\n";
     cout<< "Number of sets line \t" << cache.getLineNumbers() << endl;
     cout << "-------------------------------------------------------------|"<<endl;
@@ -122,7 +184,7 @@ int main(){
         b.setTag("");
         cache.blocks.push_back(b);
     }
-    readFromCache(cache);
+    cache.blocks[16].setTag("111111111111111111");
 
     cout << "Memory address Format-------------------------------------------------------------|"<<endl;
 
@@ -135,7 +197,10 @@ int main(){
         else
             blockOffset += binaryString[i];
     }
-
+    ;
+    a.setAddressTag(tag);
+    a.setAddressOffset(blockOffset);
+    a.setAddressIndex(setIndex);
     cout << "TAG " << tagSize << "\t" << hextoDec(tag) << "\t";
     printAddress(tag);
     cout << "SetIndex " << setIndexSize << "\t" << hextoDec(setIndex) << "\t";
@@ -146,8 +211,7 @@ int main(){
 
     cout << "\nRow in which the block is placed is" << index << endl;
 
-    string address = "ffffff50";
-    readFromCache(cache, address);
-
+    readFromCache(cache, a);
+    cacheResults(cache);
 	return 0;
 }
