@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include "hellomake.h"
+#include "header.h"
 #include <string>
 #include <iostream>
 
@@ -10,6 +9,8 @@ void printAddress(string str){
     cout << str+"\t|";
     // cout << "-------------------------------------------------------------|"<<endl;
 }
+
+
 
 int hextoDec(string str){
 	  unsigned int result;
