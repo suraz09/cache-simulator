@@ -19,9 +19,12 @@
             loadhit = 0;
             storemiss = 0;
             storehit = 0;
+            load = 0;
+            store = 0;
+            memRefs = 0;
             for(int i = 0; i < getLineNumbers();i++)
             {
-                Block b(0,0,"");
+                Block b(1,0,"");
                 
                 blocks.push_back(b);
             }
@@ -30,10 +33,40 @@
         void Cache::increaseHit(){
             hit++;
         }
+        void Cache::increaseLoadHit(){
+            loadhit++;
+        }
+        void Cache::increaseStoreHit(){
+            storehit++;
+        }
         void Cache::increaseMiss(){
             miss++;
         }
+        void Cache::increaseMemRefs(){
+            memRefs++;
+        }
+        void Cache::increaseStoreCount(){
+            store++;
+        }
+        void Cache::increaseLoadCount(){
+            load++;
+        }
 
+        int Cache::getLoadHits(){
+            return loadhit;
+        }
+        int Cache::getStoreHits(){
+            return storehit;
+        }
+        int Cache::getMemRefs(){
+            return memRefs;
+        }
+        int Cache::getLoad(){
+            return load;
+        }
+        int Cache::getStore(){
+            return store;
+        }
         int Cache::getHits(){
             return hit;
         }
@@ -42,20 +75,29 @@
             return miss;
         }
 
+        int Cache::getAssociativity(){
+            return associativity;
+        }
+
         int Cache::getBlockOffsetSize(){
             return log2(blockSize);
         }
 
         int Cache::getSetIndexSize(){
-            return log2((size * 1024) / (blockSize)/  associativity);
+            if(associativity == 0)
+                return 0;
+                // cout << associativity << "----?\n";
+            // cout << "Block = " << ((size * 1024) / (blockSize) / associativity) << "+++" << endl;
+            return log2((size * 1024) / (blockSize) / associativity);
         }
         int Cache::getLineNumbers(){
-            return (size * 1024) / (blockSize * associativity);
+            return (size * 1024) / (blockSize);
         }
     
-        int Cache::getBlock(string setIndex){
-            
-            return 1;
+        int Cache::getNumberofBlocks(){
+             if(associativity == 0)
+                return ((size * 1024) / (blockSize) / associativity);
+            return ((size * 1024) / (blockSize) / associativity);
         }
         int Cache::getIndex(int index){
 

@@ -13,7 +13,7 @@ public:
 
 	string getInstructionType();
 	int getInstructionCount();
-	MemoryAddress getInstuctionAddress();
+	MemoryAddress getInstructionAddress();
 	string getRawAddress();
 
 	void setInstructionType(char s);

@@ -27,8 +27,8 @@ string Instruction::getInstructionType(){
 int Instruction::getInstructionCount(){
 	return count;
 }
-MemoryAddress getInstuctionAddress(){
-	// return binaryAddress[0];
+MemoryAddress Instruction::getInstructionAddress(){
+	return binaryAddress[0];
 }
 
 string Instruction::getRawAddress(){
@@ -44,8 +44,6 @@ void Instruction::setInstructionCount(int c){
 void Instruction::setInstructionAddress(int tagSize, int setIndexSize){
 	string binaryString = hextoBinary(rawAddress);
 	string tag, setIndex, blockOffset;
-	// int tagSize = 10; 
-	// int setIndexSize = 10;
 	 for (int i = 0; i < binaryString.size(); i++){
         if(i < tagSize)
             tag += binaryString[i];

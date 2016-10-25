@@ -16,16 +16,28 @@ public:
     int loadmiss;
     int storemiss;
     int storehit;
+    int load;
+    int store;
+    int memRefs;
     vector<Block> blocks;
 
     Cache(int b, int a, int s, int r, int m,int w);
         
     void increaseHit();
-        
+    void increaseMemRefs();  
     void increaseMiss();
+    void increaseLoadHit();
+    void increaseStoreHit();
+    void increaseStoreCount();
+    void increaseLoadCount();
 
+
+    int getMemRefs();
     int getHits();
-
+    int getLoadHits();
+    int getStoreHits();
+    int getLoad();
+    int getStore();
     int getMiss();
 
     int getBlockOffsetSize();
@@ -33,8 +45,10 @@ public:
     int getSetIndexSize();
     int getLineNumbers();
 
-    int getBlock(string setIndex);
+    int getNumberofBlocks();
     int getIndex(int index);
+
+    int getAssociativity();
     // void initializeBlocks(int lineNumbers);
     
 };

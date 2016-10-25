@@ -1,3 +1,5 @@
 *.o
 simulator
 *.txt
+*.out
+*.txt~

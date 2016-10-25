@@ -1,16 +1,28 @@
 #include "header.h"
 #include <string>
 #include <iostream>
+#include <sstream>
+#include <cmath>
+
 
 using namespace std;
 
-void printAddress(string str){
-	
-    cout << str+"\t|";
-    // cout << "-------------------------------------------------------------|"<<endl;
+
+
+int bin2Dec(string str){
+    
+    int n = 0;
+    int size = str.size() -1 ;
+    int count = 0;
+    for(int i = 0; i <= size; i++) {
+    if ( str[i] == '1' ) 
+        n = n + pow(2, size - count );
+        count++; 
+        // str++;
+    }
+    // cout << "binary" << n;
+    return n;
 }
-
-
 
 int hextoDec(string str){
 	  unsigned int result;
@@ -39,6 +51,20 @@ int hextoDec(string str){
     }
     return result;
 }
+
+int bintodec(string str) {
+    int n = 0;
+    int size = str.size() ;
+    int count = 0;
+    for(int i = 0; i < size; i++) {
+    if ( str[i] == '1' ) 
+        n = n + pow(2, size - count );
+        count++; 
+        // str++;
+    }
+    return n;
+}
+
 
 string hextoBinary(string str){
     unsigned int result;
