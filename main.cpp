@@ -16,7 +16,6 @@ int count;
 void directMappedCache(Cache &c, MemoryAddress address, string operation){
     c.increaseMemRefs();
     int indexToSearch = bin2Dec(address.getAddressIndex()) % c.getLineNumbers(); 
-    cout << indexToSearch << endl;
     string st = "s";
     Block cur_block = c.blocks[indexToSearch];
     if(cur_block.getTag() == address.getAddressTag() && cur_block.getValid() == 1){
@@ -124,10 +123,10 @@ void nWaySetAssociative(Cache &c, MemoryAddress address, string operation){
                 c.increaseLoadHit();
             }
             cur_block.setTag(address.getAddressTag());
-            c.blocks[i] = cur_block;
             hit = true;
             cur_block.setDirty(1);            
             cur_block.setValid(1);
+            c.blocks[i] = cur_block;
             break;
         }
         else if(cur_block.getValid() == 0){
