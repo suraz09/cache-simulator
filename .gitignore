@@ -3,3 +3,4 @@ simulator
 *.txt
 *.out
 *.txt~
+*.trace

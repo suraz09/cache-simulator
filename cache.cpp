@@ -24,7 +24,7 @@
             memRefs = 0;
             for(int i = 0; i < getLineNumbers();i++)
             {
-                Block b(1,0,"");
+                Block b(0,0,"");
                 
                 blocks.push_back(b);
             }
@@ -101,6 +101,12 @@
         }
         int Cache::getIndex(int index){
 
+        }
+        int Cache::getWriteType(){
+            return write_type;
+        }
+        int Cache::getReplacementPolicy(){
+            return replacement_policy;
         }
         // void Cache::initializeBlocks(int lineNumbers){
         //     // for(int i = 0; i < lineNumbers;i++)

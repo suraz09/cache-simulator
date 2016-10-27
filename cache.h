@@ -48,6 +48,8 @@ public:
     int getNumberofBlocks();
     int getIndex(int index);
 
+    int getWriteType();
+    int getReplacementPolicy();
     int getAssociativity();
     // void initializeBlocks(int lineNumbers);
     

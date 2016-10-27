@@ -43,8 +43,9 @@ void Instruction::setInstructionCount(int c){
 }
 void Instruction::setInstructionAddress(int tagSize, int setIndexSize){
 	string binaryString = hextoBinary(rawAddress);
+	// cout << binaryString << endl;
 	string tag, setIndex, blockOffset;
-	 for (int i = 0; i < binaryString.size(); i++){
+	 for (int i = 0; i < 32; i++){
         if(i < tagSize)
             tag += binaryString[i];
         else if(i < tagSize + setIndexSize)
