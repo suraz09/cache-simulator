@@ -1,6 +1,6 @@
 *.o
 simulator
-*.txt
+test.txt
 *.out
 *.txt~
 *.trace

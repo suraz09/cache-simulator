@@ -7,6 +7,7 @@
         valid = v;
         dirty = d;
         tag = s;
+        timeStamp = 0;
     }
     
     void Block::setValid(int v){
@@ -20,6 +21,10 @@
     void Block::setTag(string t){
         tag = t;
     }
+    void Block::setTimeStamp(int time){
+        timeStamp = time;
+    }
+
     int Block::getValid(){
         return valid;
     }
@@ -29,4 +34,8 @@
 
     string Block::getTag(){
         return tag;
+    }
+
+    int Block::getTimeStamp(){
+        return timeStamp;
     }
