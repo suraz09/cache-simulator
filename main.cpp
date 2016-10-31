@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <cmath>
 #include <time.h>
+#include <iomanip>
 
 
 using namespace std;
@@ -32,6 +33,7 @@ void directMappedCache(Cache &c, MemoryAddress address, string operation){
     }
     else{
         if(st.compare(operation) < 0){
+            c.increaseStoreMiss();
             if(c.getWriteType() == 1){
                 cur_block.setTag(address.getAddressTag());
                 cur_block.setDirty(1);
@@ -39,6 +41,7 @@ void directMappedCache(Cache &c, MemoryAddress address, string operation){
             }
         }
         else{
+            c.increaseLoadMiss();
             cur_block.setTag(address.getAddressTag());
             cur_block.setValid(1);
         }
@@ -52,7 +55,7 @@ void directMappedCache(Cache &c, MemoryAddress address, string operation){
 void fullyAssociativeCache(Cache &c, MemoryAddress address, string operation){
     c.increaseMemRefs();
     int lineNumber = c.getLineNumbers();
-    bool hit;
+    bool hit = false;
     string st = "s";
 
     Block cur_block(0,0," ");
@@ -67,46 +70,72 @@ void fullyAssociativeCache(Cache &c, MemoryAddress address, string operation){
             else{
                 c.increaseLoadHit();
             }
+            cur_block.setTag(address.getAddressTag());
             hit = true;
-            break;
             cur_block.setDirty(1);            
+            cur_block.setValid(1);
+            c.blocks[i] = cur_block;
+            break;
+            return;
+        }
+        else if(cur_block.getValid() == 0){
+            c.increaseMiss();
+            if(st.compare(operation) < 0){
+                c.increaseStoreHit();
+            }
+            else{
+                c.increaseLoadHit();
+            }
+            cur_block.setTag(address.getAddressTag());
+            hit = true;
+            cur_block.setDirty(1);            
+            cur_block.setValid(1);
+            break;
+            return;
         }
     }
     if(!hit){
         c.increaseMiss();
         float a = rand() % c.getLineNumbers();
-        if(st.compare(operation) < 0){ // write condition
-            while(c.blocks[a].getValid() != 0){
-                numberofvalidEntry++;
-                a = rand() % c.getLineNumbers();
-                cur_block = c.blocks[a];
-                if(numberofvalidEntry >= lineNumber){
-                    for(int i = 0; i < lineNumber; i++){
-                        if(c.blocks[i].getValid() == 0){
-                            cur_block = c.blocks[i];
-                        }
-                    }
-                    break;
+
+        if(c.getReplacementPolicy() == 0){ //random replacement
+            if(st.compare(operation) < 0){
+                c.increaseStoreMiss();
+                if(c.getWriteType() == 1){ //write allocate
+                    cur_block = c.blocks[a];
+                    cur_block.setTag(address.getAddressTag());
+                    cur_block.setDirty(1);
+                    cur_block.setValid(1);
+                    c.blocks[a] = cur_block;
                 }
             }
-            cur_block.setValid(1);
-            cur_block.setTag(address.getAddressTag());
+            else{ //read operation miss
+                c.increaseLoadMiss();
+                cur_block = c.blocks[a];
+                cur_block.setTag(address.getAddressTag());
+                cur_block.setValid(1);
+                c.blocks[a] = cur_block;
+            }
         }
-        c.blocks[a] = cur_block;
-
+        else{
+            for (int i = 0; i < lineNumber -1 ; i++){
+                c.blocks[i] = c.blocks[i+1];
+            }
+            c.blocks[lineNumber - 1].setTag(address.getAddressTag());
+            c.blocks[lineNumber - 1].setDirty(1);
+            c.blocks[lineNumber - 1].setValid(1);
+        }
     }
     
 }
 
-void nWaySetAssociative(Cache &c, MemoryAddress address, string operation){
+void nWaySetAssociative(Cache &c, MemoryAddress address, string operation, Instruction ins){
     c.increaseMemRefs();
     string st = "s";
     bool hit = false;
-    
     Block cur_block(0,0," ");
     int ways = c.getAssociativity();
     int startIndex = ways  * bin2Dec(address.getAddressIndex());
-
     int endIndex = startIndex + (ways - 1);
     int counter = 0;
     int numberofvalidEntry;
@@ -126,17 +155,33 @@ void nWaySetAssociative(Cache &c, MemoryAddress address, string operation){
             hit = true;
             cur_block.setDirty(1);            
             cur_block.setValid(1);
+            cur_block.setTimeStamp( i % ways);
+
             c.blocks[i] = cur_block;
+            counter = 0;
+
             break;
+            return;
         }
         else if(cur_block.getValid() == 0){
+            // cout << c.getMiss() << endl;
             c.increaseMiss();
+            if(st.compare(operation) < 0){
+                c.increaseStoreHit();
+            }
+            else{
+                c.increaseLoadHit();
+            }
             cur_block.setTag(address.getAddressTag());
-            // hit = true;
+            hit = true;
             cur_block.setDirty(1);            
             cur_block.setValid(1);
+            cur_block.setTimeStamp( i % ways);
+
             c.blocks[i] = cur_block;
+            counter = 0;
             break;
+            return;
         }   
     }
     int indexTostart = startIndex;
@@ -148,24 +193,50 @@ void nWaySetAssociative(Cache &c, MemoryAddress address, string operation){
         //This is a miss condition read or write
         if(c.getReplacementPolicy() == 0){ //random replacement
              if(st.compare(operation) < 0){
+                c.increaseStoreMiss();
                 if(c.getWriteType() == 1){ //write allocate
                     cur_block = c.blocks[a];
                     cur_block.setTag(address.getAddressTag());
                     cur_block.setDirty(1);
                     cur_block.setValid(1);
                     c.blocks[a] = cur_block;
-                    // c.increaseStoreHit();
                 }
             }
             else{ //read operation miss
+                c.increaseLoadMiss();
                 cur_block = c.blocks[a];
                 cur_block.setTag(address.getAddressTag());
                 cur_block.setValid(1);
                 c.blocks[a] = cur_block;
             }
         }
-        else{
-            //FIFO replacement
+        else{ 
+             if(st.compare(operation) < 0){
+                c.increaseStoreMiss();
+                if(c.getWriteType() == 1){ //write allocate
+                    for (int i = startIndex; i < endIndex; i++){
+                    c.blocks[i] = c.blocks[i+1];
+                }
+                cur_block.setTag(address.getAddressTag());
+                    // cur_block.setDirty(1);
+                    cur_block.setValid(1);
+                c.blocks[endIndex].setTag(address.getAddressTag());
+                c.blocks[endIndex].setDirty(1);
+                c.blocks[endIndex].setValid(1);
+
+                                 
+                }
+            }
+            else{
+                c.increaseLoadMiss();
+                for (int i = startIndex; i < endIndex; i++){
+                    c.blocks[i] = c.blocks[i+1];
+                }
+                c.blocks[endIndex].setTag(address.getAddressTag());
+                c.blocks[endIndex].setDirty(1);
+                c.blocks[endIndex].setValid(1);
+                                
+            }
         }
 
     }
@@ -178,39 +249,69 @@ void readFromCache(Cache &c, MemoryAddress address){
 
 
 
-void cacheResults(Cache &c, string fileName){
+void cacheResults(Cache &c, string fileName, int insCount){
+    int ins = insCount;
     cout << "Total Hits => " << c.getHits() << endl;
-    cout << "Total Memory References => " << c.getMemRefs() << endl;
-    cout << "Total Load Hits => " << c.getLoadHits() << endl;
-    cout << "Total Store Hits => " << c.getStoreHits() << endl;
+    cout << "Total Miss => " << c.getMiss() << endl;
+    // cout << "Total Memory References => " << c.getMemRefs() << endl;
+    // cout << "_____________________________________________" << endl;
+    // cout << "Total Load Hits => " << c.getLoadHits() << endl;
+    // cout << "Total Store Hits => " << c.getStoreHits() << endl;
+    // cout << "Total Load Miss  => " << c.getLoadMiss() << endl;
+    // cout << "Total Store Miss  => " << c.getStoreMiss() << endl;
 
-    cout << "Total Store => " << c.getStore() << endl;
-    cout << "Total Load => " << c.getLoad() << endl;
+    // cout << "_____________________________________________" << endl;
 
 
-    float hitRate = (float)c.getHits() * 100 / c.getMemRefs();
-    float loadHitRate = (float)c.getLoadHits() * 100 / c.getLoad();
-    float storeHitRate = (float)c.getStoreHits() * 100 / c.getStore();
+    // cout << "Total Store => " << c.getStore() << endl;
+    // cout << "Total Load => " << c.getLoad() << endl;
+
+    // cout << c.getBlockOffsetSize() << c.getSetIndexSize() << endl   ;
+
+    float hitRate = (float)(c.getHits() * 100  / (float)c.getMemRefs()); // Multiply by 100 for percentage
+    float missRate = (float)(c.getMiss()  / (float)c.getMemRefs()); // Multiply by 100 for percentage
+
+    float loadHitRate = (float)c.getLoadHits() * 100 / (float)c.getLoad();
+    float storeHitRate = (float)c.getStoreHits() * 100 / (float)c.getStore();
 
     cout << "Total Hit rate =>" << hitRate << "\%" << endl;
     cout << "Load hit rate =>" << loadHitRate << "\%" << endl;
     cout << "Store hit rate =>" << storeHitRate << "\%" << endl;
-    string outPutFile = fileName + ".out";
-    ofstream myfile;
-    myfile.open (outPutFile.c_str());
-    myfile << "Total Hit rate =>" << hitRate << "\%\n" ;
-    myfile << "Total Hit rate =>" << hitRate << "\%" << endl;
-    myfile << "Load hit rate =>" << loadHitRate << "\%" << endl;
-    myfile << "Store hit rate =>" << storeHitRate << "\%" << endl;
-    myfile.close();
-    cout  << count;
+    cout << "Total miss rate => " << missRate << endl;
 
+    
+    float memRefs = (float)c.getMemRefs();
+    int miss_penalty = c.getMissPenalty();
+
+    int TotalRunTime = memRefs + (c.getMiss() * miss_penalty ) + insCount;
+    // int TotalRunTime = insCount +  c.getMemRefs() + c.getMiss() * c.getMissPenalty(); 
+
+    float amal = (1) + (missRate * miss_penalty);
+    cout << "Total Run time => " << TotalRunTime  << " cycles" << endl;
+
+    // float amat = ((float)c.getMemRefs() / (float)insCount) + (float)missRate /100 * (float)c.getMissPenalty();
+
+    cout    << "AMAl => " << amal << " cycles" << endl;
+
+
+    // string outPutFile = fileName + ".out";
+    ofstream myfile;
+    // int pos = outPutFile.find("/traces/") ;
+    // cout << outPutFile.substr(9);
+    string outPutFile = "./output/" + fileName.substr(9) + ".out";
+    // str.substr (3,5);
+    myfile.open (outPutFile.c_str());
+    myfile << "Total Hit rate: " << hitRate << "\%\n" ;
+    myfile << "Load hit rate: " << loadHitRate << "\%" << endl;
+    myfile << "Store hit rate: " << storeHitRate << "\%" << endl;
+    myfile << "Total Run Time: " << TotalRunTime << " cycles" << endl;
+    myfile << "Average Memory Access Latency: " << amal  << " cycles" << endl;
+
+    myfile.close();
 }
 
 void writeIntoCache(Cache &c, MemoryAddress address){
-    
     int indexToSearch;
-    
 }
 
 int main(int argc,  char* argv[]){
@@ -244,6 +345,19 @@ int main(int argc,  char* argv[]){
     }else{
         cout<< "Set Associative Cache" << endl;     
     }
+
+    if(cache.getReplacementPolicy() == 0){
+        cout<< "Random Replacement" << endl;     
+    }else{
+        cout<< "FIFO replacement" << endl;     
+    }
+
+    if(cache.getWriteType() == 0){
+        cout<< "No write allocate" << endl;     
+    }else{
+        cout<< "Write Allocate" << endl;     
+    }
+
     string f2 = argv[2];
     fstream f;
     f.open(f2.c_str());
@@ -267,14 +381,11 @@ int main(int argc,  char* argv[]){
         else if(mapWays == 1){
             directMappedCache(cache, ins.getInstructionAddress(),ins.getInstructionType());
         }else{
-            nWaySetAssociative(cache, ins.getInstructionAddress(), ins.getInstructionType());
-            // cout << (ins.getInstructionAddress().getAddressIndex()) << endl;
+            nWaySetAssociative(cache, ins.getInstructionAddress(), ins.getInstructionType(), ins);
         }
 
     }
-    cacheResults(cache , argv[2]);
-    cout << "Total Ins Count =" << TotalCount << endl;
-  
+    cacheResults(cache , argv[2],TotalCount);
     f.close();
 
 	return 0;

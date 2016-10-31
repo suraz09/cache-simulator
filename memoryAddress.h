@@ -4,8 +4,8 @@ public:
     string tag;
     string offset;
     string index;
-    // MemoryAddress();
     MemoryAddress(string t, string o, string i);
+    
     void setAddressTag(string addressTag);
 
     void setAddressOffset(string addressOffset);

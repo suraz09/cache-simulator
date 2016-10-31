@@ -18,7 +18,6 @@ int bin2Dec(string str){
     if ( str[i] == '1' ) 
         n = n + pow(2, size - count );
         count++; 
-        // str++;
     }
     return n;
 }
@@ -51,42 +50,19 @@ int hextoDec(string str){
     return result;
 }
 
-// int bintodec(string str) {
-//     int n = 0;
-//     int size = str.size() ;
-//     int count = 0;
-//     for(int i = 0; i < size; i++) {
-//     if ( str[i] == '1' ) 
-//         n = n + pow(2, size - count );
-//         count++; 
-//         // str++;
-//     }
-//     return n;
-// }
 
 
 string hextoBinary(string str){
-    // cout << str << "__________________________________________________";
-    
-    // cout << str.size();
     str = str.substr(2,str.size() - 3);
     int size =  4* (str.size());
-    // cout << str.substr(2,str.size() -3);;
     int num = hextoDec(str);
-    // cout << "NUmber us" << num;
-    /* Calculate the Binary String */
     
     string bstring;    
-    // bstring[size] = '\0';
-    // cout << "Size is " << size << endl;
     
     for(int i = size -1; i >= 0; i-- )
     {
         bstring  += (num == ((1 << i) | num)) ? '1' : '0';
     }
-    
-    // cout << bstring.size() << "--->" << bin2Dec(bstring) << endl;
-    // cout << bstring.size() << endl;
 
     return bstring;
    

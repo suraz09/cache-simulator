@@ -28,6 +28,11 @@ public:
     void increaseMiss();
     void increaseLoadHit();
     void increaseStoreHit();
+
+    void increaseLoadMiss();
+    void increaseStoreMiss();
+
+
     void increaseStoreCount();
     void increaseLoadCount();
 
@@ -35,7 +40,9 @@ public:
     int getMemRefs();
     int getHits();
     int getLoadHits();
+    int getLoadMiss();
     int getStoreHits();
+    int getStoreMiss();
     int getLoad();
     int getStore();
     int getMiss();
@@ -51,6 +58,5 @@ public:
     int getWriteType();
     int getReplacementPolicy();
     int getAssociativity();
-    // void initializeBlocks(int lineNumbers);
-    
+    int getMissPenalty();
 };
