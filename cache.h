@@ -1,5 +1,21 @@
-#include "block.h"
+/*************************************************************************
+/
+/   filename: cache.h
+/
+/   description: Header for cache class.
+/
+/   authors: Acharya, Suraj
+/
+/   class:  CSE 331
+/   instructor: Zheng
+/   assignment: Lab Project #1
+/
+/   assigned: Oct 17, 2016
+/   due:    Oct 31, 2016
+/
+/************************************************************************/
 
+#include "block.h"
 #include <vector>
 
 class Cache{    

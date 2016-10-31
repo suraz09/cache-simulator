@@ -1,3 +1,19 @@
+/*************************************************************************
+/
+/   filename: block.cpp
+/
+/   description: Implements the class Block
+/
+/   authors: Acharya, Suraj
+/
+/   class:  CSE 331
+/   instructor: Zheng
+/   assignment: Lab Project #1
+/
+/   assigned: Oct 17, 2016
+/   due:    Oct 31, 2016
+/
+/************************************************************************/
 #include "header.h"
 #include "block.h"
 #include <string>

@@ -1,3 +1,20 @@
+/*************************************************************************
+/
+/   filename: block.h
+/
+/   description: Header for cache blocks
+/
+/   authors: Acharya, Suraj
+/
+/   class:  CSE 331
+/   instructor: Zheng
+/   assignment: Lab Project #1
+/
+/   assigned: Oct 17, 2016
+/   due:    Oct 31, 2016
+/
+/************************************************************************/
+
 class Block {
 public:
     int valid;

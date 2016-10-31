@@ -1,3 +1,20 @@
+/*************************************************************************
+/
+/   filename: memoryAddress.h
+/
+/   description: Header for MemoryAddress Class
+/
+/   authors: Acharya, Suraj
+/
+/   class:  CSE 331
+/   instructor: Zheng
+/   assignment: Lab Project #1
+/
+/   assigned: Oct 17, 2016
+/   due:    Oct 31, 2016
+/
+/************************************************************************/
+
 #include <string>
 class MemoryAddress{
 public:

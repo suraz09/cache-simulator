@@ -1,3 +1,20 @@
+/*************************************************************************
+/
+/   filename: instruction.h
+/
+/   description: Header for Instruction class
+/
+/   authors: Acharya, Suraj
+/
+/   class:  CSE 331
+/   instructor: Zheng
+/   assignment: Lab Project #1
+/
+/   assigned: Oct 17, 2016
+/   due:    Oct 31, 2016
+/
+/************************************************************************/
+
 #include "memoryAddress.h"
 #include <string>
 #include <vector>

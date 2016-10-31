@@ -1,3 +1,20 @@
+/*************************************************************************
+/
+/   filename: main.cpp
+/
+/   description: Implements the cache simulator.
+/
+/   authors: Acharya, Suraj
+/
+/   class:  CSE 331
+/   instructor: Zheng
+/   assignment: Lab Project #1
+/
+/   assigned: Oct 17, 2016
+/   due:    Oct 31, 2016
+/
+/************************************************************************/
+
 #include "header.h"
 #include "cache.h"
 #include "instruction.h"
@@ -253,20 +270,6 @@ void cacheResults(Cache &c, string fileName, int insCount){
     int ins = insCount;
     cout << "Total Hits => " << c.getHits() << endl;
     cout << "Total Miss => " << c.getMiss() << endl;
-    // cout << "Total Memory References => " << c.getMemRefs() << endl;
-    // cout << "_____________________________________________" << endl;
-    // cout << "Total Load Hits => " << c.getLoadHits() << endl;
-    // cout << "Total Store Hits => " << c.getStoreHits() << endl;
-    // cout << "Total Load Miss  => " << c.getLoadMiss() << endl;
-    // cout << "Total Store Miss  => " << c.getStoreMiss() << endl;
-
-    // cout << "_____________________________________________" << endl;
-
-
-    // cout << "Total Store => " << c.getStore() << endl;
-    // cout << "Total Load => " << c.getLoad() << endl;
-
-    // cout << c.getBlockOffsetSize() << c.getSetIndexSize() << endl   ;
 
     float hitRate = (float)(c.getHits() * 100  / (float)c.getMemRefs()); // Multiply by 100 for percentage
     float missRate = (float)(c.getMiss()  / (float)c.getMemRefs()); // Multiply by 100 for percentage
@@ -284,22 +287,15 @@ void cacheResults(Cache &c, string fileName, int insCount){
     int miss_penalty = c.getMissPenalty();
 
     int TotalRunTime = memRefs + (c.getMiss() * miss_penalty ) + insCount;
-    // int TotalRunTime = insCount +  c.getMemRefs() + c.getMiss() * c.getMissPenalty(); 
 
     float amal = (1) + (missRate * miss_penalty);
     cout << "Total Run time => " << TotalRunTime  << " cycles" << endl;
 
-    // float amat = ((float)c.getMemRefs() / (float)insCount) + (float)missRate /100 * (float)c.getMissPenalty();
-
     cout    << "AMAl => " << amal << " cycles" << endl;
 
 
-    // string outPutFile = fileName + ".out";
     ofstream myfile;
-    // int pos = outPutFile.find("/traces/") ;
-    // cout << outPutFile.substr(9);
     string outPutFile = "./output/" + fileName.substr(9) + ".out";
-    // str.substr (3,5);
     myfile.open (outPutFile.c_str());
     myfile << "Total Hit rate: " << hitRate << "\%\n" ;
     myfile << "Load hit rate: " << loadHitRate << "\%" << endl;
