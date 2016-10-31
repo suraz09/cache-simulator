@@ -1,5 +1,5 @@
 *.o
 simulator
-*.txt~
+*.txt
 *.trace
 *.out

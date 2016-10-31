@@ -10,8 +10,6 @@ Cache simulator for basic load/store architecture.  Implemented in C++, this arc
 Documents
 -------------
 
-StackEdit stores your documents in your browser, which means all your documents are automatically saved locally and are accessible **offline!**
-
 > **Files:**
 
 > -  Confs/*.conf: This file contains the configuration of the cache to be used. They are: block-size, associativity, cache size, replacement policy, miss penalty and write allocate.
